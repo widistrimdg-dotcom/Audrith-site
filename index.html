@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark" />
+<title>Audrith — Trust infrastructure for AI agents</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300;1,9..144,500&display=swap" rel="stylesheet" />
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+--bg: #07090E;
+--bg2: #0B0F18;
+--bg3: #101520;
+--bg4: #161D2C;
+--line: rgba(255,255,255,0.06);
+--line2: rgba(255,255,255,0.11);
+--v: #6B5FF5;
+--v2: #9B8FFF;
+--v3: #C8C0FF;
+--g: #1EC994;
+--g2: #5DDBB8;
+--a: #F0920A;
+--a2: #F9C05A;
+--txt: #A8B0C0;
+--sub: #485060;
+--white: #EEF0F8;
+--em: #D8DCEE;
+--danger:#FF6A7A;
+--max: 1120px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+background: var(--bg);
+color: var(--txt);
+font-family: 'IBM Plex Mono', monospace;
+overflow-x: hidden;
+text-rendering: optimizeLegibility;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+content: "";
+position: fixed;
+inset: 0;
+z-index: 1;
+pointer-events: none;
+background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+opacity: .12;
+}
+
+nav, .hero, section, footer { position: relative; z-index: 2; }
+a { color: inherit; }
+button, input, textarea, select { font: inherit; }
+button { appearance: none; -webkit-appearance: none; }
+section[id] { scroll-margin-top: 84px; }
+
+.wrap { max-width: var(--max); margin: 0 auto; }
+.split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+.section-label {
+display: flex;
+align-items: center;
+gap: .5rem;
+font-size: .6rem;
+color: var(--v2);
+letter-spacing: 2.5px;
+text-transform: uppercase;
+margin-bottom: 1rem;
+}
+.section-label::before {
+content: "";
+width: 20px;
+height: 1px;
+background: var(--v);
+}
+section { padding: 6rem 1.25rem; }
+h1 {
+font-family: 'Fraunces', serif;
+font-weight: 700;
+font-size: clamp(2.45rem, 5.6vw, 4.35rem);
+color: var(--white);
+line-height: 1.05;
+letter-spacing: -1.5px;
+margin-bottom: 1.3rem;
+max-width: 860px;
+}
+h1 em, h2 em { font-style: italic; color: var(--v2); }
+h2 {
+font-family: 'Fraunces', serif;
+font-weight: 700;
+font-size: clamp(1.85rem, 3.7vw, 3rem);
+color: var(--white);
+line-height: 1.12;
+letter-spacing: -.5px;
+margin-bottom: 1rem;
+}
+.section-sub {
+font-family: 'Fraunces', serif;
+font-weight: 300;
+font-size: 1rem;
+color: var(--txt);
+line-height: 1.72;
+max-width: 620px;
+margin-bottom: 3rem;
+}
+
+/* NAV */
+nav {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+z-index: 200;
+height: 56px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 1.25rem;
+background: rgba(7,9,14,.9);
+backdrop-filter: blur(16px);
+border-bottom: 1px solid var(--line);
+}
+.logo {
+font-family: 'Fraunces', serif;
+font-weight: 700;
+font-size: 1rem;
+color: var(--white);
+letter-spacing: -.3px;
+text-decoration: none;
+}
+.nav-links {
+display: flex;
+list-style: none;
+gap: 2px;
+}
+.nav-links a {
+text-decoration: none;
+color: var(--sub);
+font-size: .68rem;
+letter-spacing: .3px;
+padding: .35rem .75rem;
+border-radius: 6px;
+transition: all .15s ease;
+}
+.nav-links a:hover { color: var(--white); background: rgba(255,255,255,.04); }
+.nav-cta { display: flex; gap: .5rem; }
+.btn-demo,
+.btn-primary,
+.btn-hero,
+.pc-btn,
+.pilot-form button {
+font-family: 'IBM Plex Mono', monospace;
+text-decoration: none;
+transition: all .16s ease;
+}
+.btn-demo {
+font-size: .7rem;
+font-weight: 600;
+padding: .4rem 1rem;
+border-radius: 7px;
+background: rgba(107,95,245,.14);
+border: 1px solid rgba(107,95,245,.3);
+color: var(--v3);
+}
+.btn-demo:hover { background: rgba(107,95,245,.24); }
+.btn-primary {
+font-size: .7rem;
+font-weight: 600;
+padding: .4rem 1rem;
+border-radius: 7px;
+background: var(--v);
+border: 1px solid var(--v);
+color: #fff;
+}
+.btn-primary:hover { background: #7B6FF8; }
+
+/* HERO */
+.hero {
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 82px 1.25rem 4rem;
+position: relative;
+overflow: hidden;
+}
+.hero-glow {
+position: absolute;
+top: 20%;
+left: 50%;
+transform: translateX(-50%);
+width: 860px;
+height: 520px;
+background: radial-gradient(ellipse, rgba(107,95,245,.06) 0%, transparent 72%);
+pointer-events: none;
+}
+.hero-grid {
+position: absolute;
+inset: 0;
+background-image:
+linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+background-size: 60px 60px;
+pointer-events: none;
+mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
+.hero-kicker {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+background: rgba(107,95,245,.08);
+border: 1px solid rgba(107,95,245,.2);
+border-radius: 100px;
+padding: .3rem 1rem;
+font-size: .62rem;
+color: var(--v2);
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-bottom: 2rem;
+}
+.kicker-pulse {
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: var(--g);
+animation: kp 2s ease-in-out infinite;
+}
+@keyframes kp { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.85); } }
+.hero-sub {
+font-family: 'Fraunces', serif;
+font-weight: 300;
+font-size: 1.08rem;
+color: var(--txt);
+line-height: 1.72;
+margin-bottom: 2.2rem;
+max-width: 630px;
+}
+.hero-actions {
+display: flex;
+gap: .875rem;
+flex-wrap: wrap;
+justify-content: center;
+margin-bottom: 1.5rem;
+}
+.btn-hero {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+font-size: .78rem;
+font-weight: 600;
+padding: .7rem 1.55rem;
+border-radius: 8px;
+}
+.btn-hero.primary {
+background: var(--v);
+border: 1px solid var(--v);
+color: #fff;
+box-shadow: 0 0 18px rgba(107,95,245,.14);
+}
+.btn-hero.primary:hover { background: #7B6FF8; transform: translateY(-1px); }
+.btn-hero.secondary {
+background: rgba(255,255,255,.05);
+border: 1px solid var(--line2);
+color: var(--em);
+}
+.btn-hero.secondary:hover { background: rgba(255,255,255,.08); }
+.hero-proof-strip {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: .55rem;
+max-width: 900px;
+margin: 0 auto 1rem;
+}
+.hero-proof-pill {
+font-size: .62rem;
+color: var(--txt);
+letter-spacing: .4px;
+padding: .38rem .7rem;
+border-radius: 999px;
+background: rgba(255,255,255,.035);
+border: 1px solid var(--line2);
+display: inline-flex;
+align-items: center;
+gap: .45rem;
+}
+.hero-proof-pill::before {
+content: "";
+width: 5px;
+height: 5px;
+border-radius: 50%;
+background: var(--g2);
+flex-shrink: 0;
+}
+.hero-bottom-note {
+font-size: .66rem;
+color: var(--sub);
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+
+/* PROBLEM */
+.problem { background: var(--bg2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.problem-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 3rem;
+align-items: center;
+}
+.problem-list { display: flex; flex-direction: column; gap: .75rem; }
+.prob-item {
+display: flex;
+align-items: flex-start;
+gap: .875rem;
+padding: 1rem 1.125rem;
+background: var(--bg3);
+border: 1px solid var(--line);
+border-radius: 10px;
+transition: border-color .2s ease;
+}
+.prob-item:hover { border-color: var(--line2); }
+.prob-icon { font-size: .92rem; margin-top: 1px; flex-shrink: 0; color: var(--danger); }
+.prob-title { font-size: .8rem; font-weight: 600; color: var(--white); margin-bottom: 3px; }
+.prob-text { font-size: .72rem; color: var(--sub); line-height: 1.55; }
+
+/* HOW */
+.how-steps { display: flex; flex-direction: column; gap: 0; }
+.how-step {
+display: grid;
+grid-template-columns: 48px 1fr;
+gap: 1.25rem;
+padding-bottom: 2.45rem;
+position: relative;
+}
+.how-step:not(:last-child)::after {
+content: "";
+position: absolute;
+left: 23px;
+top: 48px;
+bottom: 0;
+width: 1px;
+background: var(--line);
+}
+.hs-num {
+width: 48px;
+height: 48px;
+border-radius: 12px;
+background: rgba(107,95,245,.1);
+border: 1px solid rgba(107,95,245,.22);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: .75rem;
+font-weight: 600;
+color: var(--v2);
+flex-shrink: 0;
+}
+.hs-body { padding-top: 8px; }
+.hs-title { font-size: .95rem; font-weight: 600; color: var(--white); margin-bottom: .375rem; }
+.hs-text { font-size: .78rem; color: var(--txt); line-height: 1.62; }
+
+/* OBJECTS */
+.objects { background: var(--bg2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.objects-grid {
+display: grid;
+grid-template-columns: repeat(5, 1fr);
+gap: 1px;
+background: var(--line);
+border: 1px solid var(--line);
+border-radius: 14px;
+overflow: hidden;
+}
+.obj-card {
+background: var(--bg2);
+padding: 1.55rem;
+transition: background .2s ease;
+min-height: 220px;
+}
+.obj-card:hover { background: var(--bg3); }
+.obj-icon { font-size: 1.2rem; margin-bottom: 1rem; }
+.obj-name { font-size: .68rem; color: var(--v2); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: .45rem; }
+.obj-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: .95rem; color: var(--white); margin-bottom: .6rem; line-height: 1.28; }
+.obj-text { font-size: .73rem; color: var(--txt); line-height: 1.58; }
+
+/* MISSION CHANNEL */
+.mission-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.mc-msg{display:flex;gap:.625rem;padding:.5rem .625rem;border-radius:8px;opacity:0;transform:translateY(6px);transition:opacity .4s ease,transform .4s ease}
+.mc-msg.mc-vis{opacity:1;transform:translateY(0)}
+.mc-msg:hover{background:rgba(255,255,255,.02)}
+.mc-sys{background:rgba(107,95,245,.04);border-left:2px solid rgba(107,95,245,.25);padding-left:.875rem;border-radius:0 8px 8px 0}
+.mc-decision{background:rgba(30,201,148,.04);border-left:2px solid rgba(30,201,148,.25);padding-left:.875rem;border-radius:0 8px 8px 0}
+.mc-av{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.78rem;flex-shrink:0;margin-top:1px}
+.mc-mh{display:flex;align-items:center;gap:.5rem;margin-bottom:3px}
+.mc-name{font-size:.68rem;font-weight:600}
+.mc-tag{font-size:.55rem;font-weight:600;letter-spacing:.5px;padding:.1rem .35rem;border-radius:4px}
+.mc-time{font-size:.57rem;color:var(--sub);margin-left:auto}
+.mc-body{font-size:.7rem;color:var(--txt);line-height:1.55}
+.mc-body strong{color:var(--white)}
+.mc-badges{display:flex;gap:.375rem;margin-top:.375rem;flex-wrap:wrap}
+.mc-badge{font-size:.57rem;font-weight:600;padding:.15rem .45rem;border-radius:4px}
+.mc-badge-v{background:rgba(107,95,245,.1);border:1px solid rgba(107,95,245,.2);color:var(--v2)}
+.mc-badge-g{background:rgba(30,201,148,.08);border:1px solid rgba(30,201,148,.2);color:var(--g2)}
+.mc-badge-a{background:rgba(240,146,10,.08);border:1px solid rgba(240,146,10,.2);color:var(--a2)}
+.mc-typing{display:flex;gap:.625rem;align-items:center;padding:.5rem .625rem .75rem;opacity:0;transition:opacity .3s ease}
+.mc-typing.mc-vis{opacity:1}
+.mc-dots{display:flex;gap:4px;align-items:center;padding:.25rem 0}
+.mc-dots span{width:5px;height:5px;border-radius:50%;background:var(--v2);display:block;animation:mcdot 1.2s ease-in-out infinite}
+.mc-dots span:nth-child(2){animation-delay:.2s}
+.mc-dots span:nth-child(3){animation-delay:.4s}
+@keyframes mcdot{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+.mc-appr{margin:.375rem 0 .375rem .625rem;background:var(--bg3);border:1px solid rgba(240,146,10,.25);border-radius:10px;padding:.875rem 1rem;opacity:0;transform:translateY(6px);transition:all .5s ease}
+.mc-appr.mc-vis{opacity:1;transform:translateY(0)}
+.mc-appr-btn{font-size:.65rem;font-weight:600;padding:.38rem .75rem;border-radius:7px;cursor:pointer;font-family:'IBM Plex Mono',monospace;transition:all .15s;border:none}
+.mc-appr-g{background:rgba(30,201,148,.1);border:1px solid rgba(30,201,148,.25);color:var(--g2)}
+.mc-appr-g:hover{background:rgba(30,201,148,.2)}
+.mc-appr-o{background:rgba(255,255,255,.04);border:1px solid var(--line2);color:var(--sub)}
+.mc-receipt{margin:.375rem 0 .375rem .625rem;background:var(--bg2);border:1px solid rgba(107,95,245,.28);border-radius:12px;overflow:hidden;box-shadow:0 0 40px rgba(107,95,245,.1);opacity:0;transform:scale(.96);transition:all .6s cubic-bezier(.34,1.4,.64,1)}
+.mc-receipt.mc-vis{opacity:1;transform:scale(1)}
+.mc-rr{display:flex;justify-content:space-between;gap:1rem;padding:.32rem 1rem;border-bottom:1px solid rgba(255,255,255,.025);font-size:.62rem;opacity:0;transform:translateX(-4px);transition:all .3s ease}
+.mc-rr.mc-vis{opacity:1;transform:translateX(0)}
+
+/* RECEIPT */
+.receipt-section { overflow: hidden; }
+.receipt-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+.receipt-card {
+background: var(--bg2);
+border: 1px solid rgba(107,95,245,.25);
+border-radius: 16px;
+overflow: hidden;
+box-shadow: 0 0 42px rgba(107,95,245,.08), 0 24px 48px rgba(0,0,0,.42);
+}
+.rc-head {
+background: var(--bg3);
+border-bottom: 1px solid var(--line);
+padding: 1.125rem 1.375rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1rem;
+}
+.rc-id { font-size: .8rem; font-weight: 600; color: var(--v2); }
+.rc-badge {
+font-size: .58rem;
+font-weight: 600;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+padding: .2rem .625rem;
+border-radius: 100px;
+background: rgba(30,201,148,.1);
+border: 1px solid rgba(30,201,148,.25);
+color: var(--g2);
+display: flex;
+align-items: center;
+gap: 5px;
+}
+.rc-bd { width: 5px; height: 5px; border-radius: 50%; background: var(--g); }
+.rc-rows { padding: .25rem 0; }
+.rc-row {
+display: flex;
+justify-content: space-between;
+gap: 1rem;
+padding: .46rem 1.375rem;
+border-bottom: 1px solid rgba(255,255,255,.03);
+font-size: .68rem;
+}
+.rc-row:last-child { border-bottom: none; }
+.rck { color: var(--sub); }
+.rcv { color: var(--txt); text-align: right; }
+.rcv.g { color: var(--g2); }
+.rcv.v { color: var(--v2); }
+.rcv.a { color: var(--a2); }
+.rc-foot {
+background: var(--bg3);
+border-top: 1px solid var(--line);
+padding: .75rem 1.375rem;
+display: flex;
+justify-content: space-between;
+gap: 1rem;
+}
+.rc-fl { font-size: .58rem; color: var(--sub); letter-spacing: 1px; text-transform: uppercase; }
+.rc-fv { font-size: .62rem; color: var(--v); }
+
+/* USE CASES BEFORE/AFTER */
+.usecases { background: var(--bg2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.ua-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.ua-card {
+background: var(--bg3);
+border: 1px solid var(--line);
+border-radius: 14px;
+padding: 1.5rem;
+}
+.ua-card.good { border-color: rgba(30,201,148,.22); box-shadow: inset 0 0 0 1px rgba(30,201,148,.04); }
+.ua-card.bad { border-color: rgba(240,146,10,.16); }
+.ua-label {
+display: inline-flex;
+align-items: center;
+gap: .45rem;
+font-size: .58rem;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+border-radius: 999px;
+padding: .22rem .55rem;
+margin-bottom: .85rem;
+}
+.ua-card.bad .ua-label {
+color: var(--a2);
+background: rgba(240,146,10,.08);
+border: 1px solid rgba(240,146,10,.18);
+}
+.ua-card.good .ua-label {
+color: var(--g2);
+background: rgba(30,201,148,.08);
+border: 1px solid rgba(30,201,148,.18);
+}
+.ua-title { font-size: .92rem; font-weight: 600; color: var(--white); margin-bottom: .7rem; }
+.ua-list { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+.ua-list li {
+font-size: .72rem;
+line-height: 1.55;
+color: var(--txt);
+display: flex;
+gap: .55rem;
+align-items: flex-start;
+}
+.ua-list li::before {
+content: "•";
+color: var(--sub);
+flex-shrink: 0;
+margin-top: .02rem;
+}
+.ua-card.good .ua-list li::before { color: var(--g2); }
+.ua-card.bad .ua-list li::before { color: var(--a2); }
+
+/* LOOKUP */
+.lookup-box { max-width: 620px; margin: 0 auto; text-align: center; }
+.lookup-input-wrap { display: flex; gap: .5rem; margin: 1.5rem 0 .75rem; }
+.lookup-input {
+flex: 1;
+min-width: 0;
+background: rgba(255,255,255,.04);
+border: 1px solid var(--line2);
+border-radius: 8px;
+padding: .7rem 1rem;
+font-size: .8rem;
+color: var(--white);
+font-family: 'IBM Plex Mono', monospace;
+outline: none;
+transition: border-color .2s ease;
+}
+.lookup-input:focus { border-color: rgba(107,95,245,.4); }
+.lookup-btn {
+background: rgba(107,95,245,.14);
+border: 1px solid rgba(107,95,245,.3);
+color: var(--v3);
+border-radius: 8px;
+padding: .7rem 1.25rem;
+font-size: .75rem;
+font-weight: 600;
+cursor: pointer;
+white-space: nowrap;
+}
+.lookup-btn:hover { background: rgba(107,95,245,.24); }
+.lookup-note { font-size: .65rem; color: var(--sub); }
+
+/* PRICING */
+.pricing { background: var(--bg2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.pricing-intro-note {
+margin-top: -1.4rem;
+margin-bottom: 2rem;
+font-size: .7rem;
+color: var(--em);
+line-height: 1.6;
+max-width: 840px;
+background: rgba(255,255,255,.03);
+border: 1px solid var(--line);
+border-radius: 12px;
+padding: .9rem 1rem;
+}
+.pricing-rule {
+font-size: .63rem;
+letter-spacing: 1.3px;
+text-transform: uppercase;
+color: var(--sub);
+margin-bottom: 1.35rem;
+}
+.pricing-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 1.15rem;
+margin-bottom: 1.6rem;
+}
+.price-card {
+position: relative;
+background: var(--bg3);
+border: 1px solid var(--line2);
+border-radius: 16px;
+padding: 1.7rem 1.45rem;
+display: flex;
+flex-direction: column;
+min-height: 100%;
+}
+.price-card:hover { border-color: rgba(107,95,245,.35); }
+.price-card.featured {
+border-color: rgba(107,95,245,.5);
+background: linear-gradient(160deg, rgba(107,95,245,.07) 0%, var(--bg3) 60%);
+box-shadow: 0 0 60px rgba(107,95,245,.08);
+}
+.price-badge {
+position: absolute;
+top: -13px;
+left: 50%;
+transform: translateX(-50%);
+background: var(--v);
+color: #fff;
+font-size: .56rem;
+font-weight: 700;
+letter-spacing: 1.7px;
+text-transform: uppercase;
+padding: .28rem .82rem;
+border-radius: 999px;
+white-space: nowrap;
+}
+.pc-name {
+font-family: 'Fraunces', serif;
+font-weight: 700;
+font-size: 1.05rem;
+color: var(--white);
+margin-bottom: .25rem;
+}
+.pc-price {
+font-family: 'Fraunces', serif;
+font-weight: 700;
+font-size: 2rem;
+line-height: 1.05;
+color: var(--white);
+margin-bottom: .25rem;
+}
+.pc-price span {
+font-family: 'IBM Plex Mono', monospace;
+font-size: .74rem;
+font-weight: 400;
+color: var(--sub);
+}
+.pc-desc {
+font-size: .72rem;
+color: var(--sub);
+line-height: 1.6;
+padding-bottom: 1.15rem;
+margin-bottom: 1.15rem;
+border-bottom: 1px solid var(--line);
+}
+.pc-features {
+list-style: none;
+display: flex;
+flex-direction: column;
+gap: .5rem;
+margin-bottom: 1.25rem;
+flex: 1;
+}
+.pc-features li {
+font-size: .7rem;
+color: var(--txt);
+display: flex;
+align-items: flex-start;
+gap: .5rem;
+line-height: 1.44;
+}
+.pc-features li::before {
+content: "✓";
+color: var(--g);
+flex-shrink: 0;
+margin-top: 1px;
+}
+.pc-btn {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 100%;
+padding: .65rem;
+border-radius: 8px;
+font-size: .72rem;
+font-weight: 600;
+text-align: center;
+cursor: pointer;
+border: 1px solid transparent;
+}
+.pc-btn.outline {
+background: transparent;
+border-color: rgba(107,95,245,.35);
+color: var(--v3);
+}
+.pc-btn.outline:hover { background: rgba(107,95,245,.1); }
+.pc-btn.solid {
+background: var(--v);
+border-color: var(--v);
+color: #fff;
+}
+.pc-btn.solid:hover { background: #7B6FF8; }
+.pc-btn.ghost {
+background: transparent;
+border-color: var(--line2);
+color: var(--sub);
+}
+.pc-btn.ghost:hover { border-color: rgba(107,95,245,.3); color: var(--v3); }
+
+.conversion-strip {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1rem;
+flex-wrap: wrap;
+background: rgba(255,255,255,.02);
+border: 1px solid var(--line);
+border-radius: 12px;
+padding: 1rem 1.15rem;
+margin-bottom: 1.8rem;
+}
+.conversion-main {
+font-size: .75rem;
+color: var(--white);
+font-weight: 600;
+}
+.conversion-sub {
+font-size: .62rem;
+color: var(--sub);
+letter-spacing: 1.2px;
+text-transform: uppercase;
+}
+
+/* FORM CTA */
+.cta-section {
+background: linear-gradient(135deg, rgba(107,95,245,.07), rgba(30,201,148,.04));
+border-top: 1px solid var(--line);
+border-bottom: 1px solid var(--line);
+}
+.cta-grid {
+display: grid;
+grid-template-columns: 1.05fr .95fr;
+gap: 2rem;
+align-items: start;
+}
+.cta-card,
+.pilot-form-wrap {
+background: rgba(255,255,255,.03);
+border: 1px solid var(--line2);
+border-radius: 16px;
+padding: 1.5rem;
+backdrop-filter: blur(10px);
+}
+.cta-note {
+font-size: .72rem;
+color: var(--txt);
+line-height: 1.65;
+margin-bottom: 1.2rem;
+max-width: 560px;
+}
+.cta-points {
+list-style: none;
+display: flex;
+flex-direction: column;
+gap: .65rem;
+margin-bottom: 1.2rem;
+}
+.cta-points li {
+font-size: .72rem;
+color: var(--txt);
+line-height: 1.5;
+display: flex;
+gap: .55rem;
+align-items: flex-start;
+}
+.cta-points li::before {
+content: "→";
+color: var(--v2);
+flex-shrink: 0;
+}
+.cta-mini {
+font-size: .62rem;
+letter-spacing: 1.2px;
+text-transform: uppercase;
+color: var(--sub);
+}
+.pilot-form-wrap h3 {
+font-family: 'Fraunces', serif;
+font-size: 1.2rem;
+color: var(--white);
+margin-bottom: .35rem;
+}
+.pilot-form-wrap p {
+font-size: .72rem;
+color: var(--sub);
+line-height: 1.58;
+margin-bottom: 1rem;
+}
+.pilot-form {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: .8rem;
+}
+.pilot-form .full { grid-column: 1 / -1; }
+.pilot-form label {
+display: block;
+font-size: .62rem;
+color: var(--sub);
+letter-spacing: 1px;
+text-transform: uppercase;
+margin-bottom: .35rem;
+}
+.field {
+width: 100%;
+background: rgba(255,255,255,.04);
+border: 1px solid var(--line2);
+border-radius: 9px;
+padding: .75rem .85rem;
+font-size: .78rem;
+color: var(--white);
+outline: none;
+transition: border-color .18s ease, background .18s ease;
+}
+.field:focus {
+border-color: rgba(107,95,245,.42);
+background: rgba(255,255,255,.05);
+}
+textarea.field {
+min-height: 108px;
+resize: vertical;
+}
+.pilot-form button {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: .45rem;
+background: var(--v);
+border: 1px solid var(--v);
+color: #fff;
+border-radius: 9px;
+padding: .78rem 1rem;
+font-size: .74rem;
+font-weight: 600;
+cursor: pointer;
+}
+.pilot-form button:hover { background: #7B6FF8; }
+.form-meta {
+display: flex;
+justify-content: space-between;
+gap: 1rem;
+flex-wrap: wrap;
+margin-top: .85rem;
+}
+.form-meta span,
+.form-meta a {
+font-size: .64rem;
+color: var(--sub);
+text-decoration: none;
+}
+.form-status {
+display: none;
+margin-top: .9rem;
+padding: .8rem .9rem;
+border-radius: 10px;
+font-size: .7rem;
+line-height: 1.55;
+}
+.form-status.ok {
+display: block;
+background: rgba(30,201,148,.08);
+border: 1px solid rgba(30,201,148,.18);
+color: var(--g2);
+}
+.form-status.err {
+display: block;
+background: rgba(240,146,10,.08);
+border: 1px solid rgba(240,146,10,.18);
+color: var(--a2);
+}
+
+/* FOOTER */
+footer { padding: 2.5rem 1.25rem; border-top: 1px solid var(--line); }
+.footer-wrap {
+max-width: var(--max);
+margin: 0 auto;
+display: grid;
+grid-template-columns: 220px 1fr 1fr 1fr;
+gap: 2rem;
+}
+.footer-brand .logo { display: block; font-size: 1.08rem; margin-bottom: .5rem; }
+.footer-tagline { font-size: .68rem; color: var(--sub); line-height: 1.55; }
+.footer-col-title {
+font-size: .6rem;
+color: var(--sub);
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-bottom: .85rem;
+}
+.footer-col a {
+display: block;
+font-size: .72rem;
+color: var(--sub);
+text-decoration: none;
+margin-bottom: .42rem;
+transition: color .15s ease;
+}
+.footer-col a:hover { color: var(--white); }
+.footer-bottom {
+max-width: var(--max);
+margin: 2rem auto 0;
+padding-top: 1.4rem;
+border-top: 1px solid var(--line);
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1rem;
+flex-wrap: wrap;
+font-size: .62rem;
+color: var(--sub);
+}
+
+@media (max-width: 1120px) {
+.objects-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 900px) {
+nav { padding: 0 1rem; }
+section { padding: 4.5rem 1rem; }
+.nav-links { display: none; }
+.split-2,
+.problem-grid,
+.receipt-wrap,
+.mission-layout,
+.pricing-grid,
+.cta-grid,
+.objects-grid,
+.footer-wrap,
+.ua-grid {
+grid-template-columns: 1fr;
+gap: 2rem;
+}
+.hero { padding-left: 1rem; padding-right: 1rem; }
+.hero-proof-strip { gap: .45rem; }
+.footer-wrap { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+.hero-actions,
+.lookup-input-wrap,
+.pilot-form {
+grid-template-columns: 1fr;
+display: grid;
+}
+.pilot-form > div { grid-column: 1 / -1; }
+.footer-wrap { grid-template-columns: 1fr; }
+.rc-row,
+.rc-foot,
+.mc-rr,
+.conversion-strip {
+flex-direction: column;
+align-items: flex-start;
+}
+.rcv { text-align: left; }
+.btn-demo,
+.btn-primary { padding: .4rem .8rem; }
+.objects-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<nav>
+<a href="#" class="logo">Audrith</a>
+<ul class="nav-links">
+<li><a href="#product">Product</a></li>
+<li><a href="#witness">Witness</a></li>
+<li><a href="#identity">Agent Identity</a></li>
+<li><a href="#usecases">Use Cases</a></li>
+<li><a href="#pricing">Pricing</a></li>
+</ul>
+<div class="nav-cta">
+<a href="#mission-channel" class="btn-demo">See demo</a>
+<a href="#contact" class="btn-primary">Apply for a pilot</a>
+</div>
+</nav>
+
+<div class="hero">
+<div class="hero-glow"></div>
+<div class="hero-grid"></div>
+
+<div class="hero-kicker"><span class="kicker-pulse"></span>Trust infrastructure for consequential AI operations</div>
+<h1>When AI makes an <em>important decision</em>, you need proof.</h1>
+<p class="hero-sub">Audrith gives organizations a verifiable record of who acted, under what authority, with what human oversight, and with what outcome.</p>
+
+<div class="hero-actions">
+<a href="#contact" class="btn-hero primary">Apply for a pilot</a>
+<a href="#mission-channel" class="btn-hero secondary">See Witness live</a>
+</div>
+
+<div class="hero-proof-strip" aria-label="Core credibility points">
+<div class="hero-proof-pill">AI-assisted hiring</div>
+<div class="hero-proof-pill">Human approval trail</div>
+<div class="hero-proof-pill">Witness Receipts</div>
+<div class="hero-proof-pill">Decision Replay</div>
+<div class="hero-proof-pill">Audit export</div>
+</div>
+
+<div class="hero-bottom-note">No free tier · No self-serve · Serious deployments only</div>
+</div>
+
+<section class="problem" id="product">
+<div class="wrap">
+<div class="problem-grid">
+<div>
+<div class="section-label">The problem</div>
+<h2>AI can act.<br />Most companies still cannot<br /><em>prove what happened.</em></h2>
+<p class="section-sub">As AI moves into hiring, approvals, routing, and other consequential workflows, the risk is no longer theoretical. When a decision is challenged, most teams still cannot clearly show the actor, the authority, the human review path, or the preserved record.</p>
+</div>
+
+<div class="problem-list">
+<div class="prob-item">
+<span class="prob-icon">&#10005;</span>
+<div>
+<div class="prob-title">No agent identity</div>
+<div class="prob-text">When an agent acts, there is often no clear record of which agent, under what permissions, in what operational context.</div>
+</div>
+</div>
+<div class="prob-item">
+<span class="prob-icon">&#10005;</span>
+<div>
+<div class="prob-title">No authorization proof</div>
+<div class="prob-text">Even when a decision is visible, it is rarely clear whether the agent was authorized to act under those exact conditions.</div>
+</div>
+</div>
+<div class="prob-item">
+<span class="prob-icon">&#10005;</span>
+<div>
+<div class="prob-title">No human oversight trail</div>
+<div class="prob-text">When human review is needed, the approval is often informal. No timestamp. No reviewer on record. No defensible proof it happened.</div>
+</div>
+</div>
+<div class="prob-item">
+<span class="prob-icon">&#10005;</span>
+<div>
+<div class="prob-title">No structured proof object</div>
+<div class="prob-text">Organizations cannot produce a coherent, portable record of what happened when an important AI-assisted action is questioned.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="witness">
+<div class="wrap">
+<div class="split-2">
+<div>
+<div class="section-label">How it works</div>
+<h2>From black-box action<br />to <em>defensible record.</em></h2>
+<p class="section-sub">Witness sits between your agents, your humans, and your audit trail. Every important operation flows through a structured, authorized, and verifiable path.</p>
+</div>
+
+<div class="how-steps">
+<div class="how-step">
+<div class="hs-num">01</div>
+<div class="hs-body">
+<div class="hs-title">Identify the agent</div>
+<div class="hs-text">Every agent has a Passport — identity, mission, organization, permissions, and oversight requirements. Not a black box. An operational entity.</div>
+</div>
+</div>
+
+<div class="how-step">
+<div class="hs-num">02</div>
+<div class="hs-body">
+<div class="hs-title">Attach context and policy</div>
+<div class="hs-text">Each operation runs inside a Mission Channel that ties participants, context, authorization references, and the relevant policy together.</div>
+</div>
+</div>
+
+<div class="how-step">
+<div class="hs-num">03</div>
+<div class="hs-body">
+<div class="hs-title">Capture human oversight</div>
+<div class="hs-text">When a human decision is required, Witness surfaces the request explicitly. Reviewer, timestamp, and outcome are all recorded.</div>
+</div>
+</div>
+
+<div class="how-step">
+<div class="hs-num">04</div>
+<div class="hs-body">
+<div class="hs-title">Issue a Witness Receipt</div>
+<div class="hs-text">Every consequential operation ends with a structured proof object — portable, human-readable, and verifiable by the organization and the affected person.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="objects" id="identity">
+<div class="wrap">
+<div class="section-label">Core system</div>
+<h2>Five product objects.<br /><em>One provable operation.</em></h2>
+<p class="section-sub">Audrith is built around five core objects that turn consequential AI-assisted decisions into records that can actually be defended later.</p>
+
+<div class="objects-grid">
+<div class="obj-card">
+<div class="obj-icon">&#x1F916;</div>
+<div class="obj-name">Agent Passport</div>
+<div class="obj-title">Identity before action</div>
+<div class="obj-text">Name, mission, permissions, ownership, oversight level, and operational history. The agent is no longer anonymous.</div>
+</div>
+
+<div class="obj-card">
+<div class="obj-icon">&#9670;</div>
+<div class="obj-name">Mission Channel</div>
+<div class="obj-title">A secure operational thread</div>
+<div class="obj-text">Context, policy, participants, decision state, and system actions — all in one auditable thread.</div>
+</div>
+
+<div class="obj-card">
+<div class="obj-icon">&#9888;</div>
+<div class="obj-name">Approval Thread</div>
+<div class="obj-title">Human oversight made visible</div>
+<div class="obj-text">When escalation is required, the request, the reviewer, the timestamp, and the rationale are captured on record.</div>
+</div>
+
+<div class="obj-card">
+<div class="obj-icon">&#x1F9FE;</div>
+<div class="obj-name">Witness Receipt</div>
+<div class="obj-title">A structured proof object</div>
+<div class="obj-text">Operation type, agent identity, authorization state, review status, result, and record integrity — all preserved together.</div>
+</div>
+
+<div class="obj-card">
+<div class="obj-icon">&#x23F1;</div>
+<div class="obj-name">Decision Replay</div>
+<div class="obj-title">Step-by-step reconstruction</div>
+<div class="obj-text">When a decision is questioned, the company does not improvise. It replays the operation chronologically.</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="mission-channel" style="background:var(--bg);border-top:1px solid var(--line)">
+<div class="wrap">
+<div class="section-label">Mission Channel</div>
+<h2>Not a chat.<br /><em>A secure operational thread.</em></h2>
+<p class="section-sub">Every important AI operation runs inside a Mission Channel — with identity, policy, human approval, and a Witness Receipt at the end. Not a conversation. An operation with proof.</p>
+
+<div class="mission-layout">
+<div style="display:flex;flex-direction:column;gap:1.5rem;padding-top:.5rem">
+<div style="display:flex;gap:1rem;align-items:flex-start"><div style="width:36px;height:36px;border-radius:9px;background:rgba(107,95,245,.1);border:1px solid rgba(107,95,245,.2);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">&#x1F916;</div><div><div style="font-size:.82rem;font-weight:600;color:var(--white);margin-bottom:4px">Identity on every message</div><div style="font-size:.72rem;color:var(--sub);line-height:1.55">Every agent is identified, authorized, and operating under a verifiable mission scope. No anonymous actions.</div></div></div>
+<div style="display:flex;gap:1rem;align-items:flex-start"><div style="width:36px;height:36px;border-radius:9px;background:rgba(30,201,148,.08);border:1px solid rgba(30,201,148,.18);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">&#x1F4CB;</div><div><div style="font-size:.82rem;font-weight:600;color:var(--white);margin-bottom:4px">Context and policy attached</div><div style="font-size:.72rem;color:var(--sub);line-height:1.55">Every thread carries the mission context, the applicable policy, and the authorization reference. Always visible, always verifiable.</div></div></div>
+<div style="display:flex;gap:1rem;align-items:flex-start"><div style="width:36px;height:36px;border-radius:9px;background:rgba(240,146,10,.08);border:1px solid rgba(240,146,10,.18);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">&#9888;</div><div><div style="font-size:.82rem;font-weight:600;color:var(--white);margin-bottom:4px">Human approval built in</div><div style="font-size:.72rem;color:var(--sub);line-height:1.55">When the operation reaches a decision boundary, the approval request surfaces inline. Reviewer, timestamp, outcome — all on record.</div></div></div>
+<div style="display:flex;gap:1rem;align-items:flex-start"><div style="width:36px;height:36px;border-radius:9px;background:rgba(107,95,245,.1);border:1px solid rgba(107,95,245,.2);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">&#x1F9FE;</div><div><div style="font-size:.82rem;font-weight:600;color:var(--white);margin-bottom:4px">Witness Receipt at the end</div><div style="font-size:.72rem;color:var(--sub);line-height:1.55">Every important operation closes with a signed, immutable proof object — accessible by the organization, the affected person, and authorized reviewers.</div></div></div>
+
+<div style="background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:1rem 1.25rem">
+<div style="font-size:.58rem;color:var(--sub);letter-spacing:2px;text-transform:uppercase;margin-bottom:.625rem">Mission Channel vs Chat</div>
+<div style="display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.7rem"><span style="color:var(--sub)">Purpose</span><span style="color:var(--v2)">Operational proof, not messaging</span></div>
+<div style="display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.7rem"><span style="color:var(--sub)">Participants</span><span style="color:var(--v2)">Agents + humans + policy</span></div>
+<div style="display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.7rem"><span style="color:var(--sub)">Output</span><span style="color:var(--g2)">Witness Receipt</span></div>
+<div style="display:flex;justify-content:space-between;padding:.3rem 0;font-size:.7rem"><span style="color:var(--sub)">Access</span><span style="color:var(--g2)">Org + affected person + reviewers</span></div>
+</div>
+</div>
+
+<div style="background:var(--bg2);border:1px solid var(--line2);border-radius:16px;overflow:hidden;box-shadow:0 0 80px rgba(107,95,245,.08),0 24px 48px rgba(0,0,0,.4)">
+<div style="background:var(--bg3);border-bottom:1px solid var(--line);padding:.75rem 1rem;display:flex;align-items:center;gap:.625rem"><div style="display:flex;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:rgba(240,64,96,.35)"></div><div style="width:10px;height:10px;border-radius:50%;background:rgba(240,200,10,.35)"></div><div style="width:10px;height:10px;border-radius:50%;background:rgba(30,201,148,.35)"></div></div><div style="flex:1;text-align:center;font-size:.62rem;color:var(--sub);letter-spacing:1px">audrith / mission channel</div></div>
+<div style="background:linear-gradient(135deg,var(--bg3),rgba(107,95,245,.05));border-bottom:1px solid var(--line);padding:.875rem 1.125rem;display:flex;align-items:center;gap:.75rem"><div style="width:30px;height:30px;border-radius:8px;background:rgba(107,95,245,.12);border:1px solid rgba(107,95,245,.2);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0">&#9670;</div><div><div style="font-size:.78rem;font-weight:600;color:var(--white)"># hiring / candidate-review</div><div style="font-size:.58rem;color:var(--sub);margin-top:1px">candidate_batch_march_2026 · Auth AR-0091 · Policy v2.3</div></div><div style="margin-left:auto;font-size:.58rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:.18rem .55rem;border-radius:100px;background:rgba(30,201,148,.1);border:1px solid rgba(30,201,148,.25);color:var(--g2);display:flex;align-items:center;gap:5px"><span style="width:5px;height:5px;border-radius:50%;background:var(--g);animation:kp 2s ease-in-out infinite;display:inline-block"></span>Secure</div></div>
+<div style="border-bottom:1px solid var(--line);padding:.5rem 1.125rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;background:rgba(255,255,255,.015)"><span style="font-size:.57rem;color:var(--sub);letter-spacing:1px;text-transform:uppercase;margin-right:.25rem">In channel</span><div style="background:var(--bg3);border:1px solid var(--line2);border-radius:100px;padding:.18rem .6rem;font-size:.6rem;color:var(--v2)">&#x1F916; Hiring Agent 04</div><div style="background:var(--bg3);border:1px solid var(--line2);border-radius:100px;padding:.18rem .6rem;font-size:.6rem;color:#7DCFFF">&#x1F4CB; Scout</div><div style="background:var(--bg3);border:1px solid var(--line2);border-radius:100px;padding:.18rem .6rem;font-size:.6rem;color:var(--a2)">&#x1F464; Sarah M.</div><div style="margin-left:auto;font-size:.57rem;color:var(--v2);background:rgba(107,95,245,.08);border:1px solid rgba(107,95,245,.15);border-radius:100px;padding:.15rem .5rem">AR-0091 active</div></div>
+
+<div id="mcFeed" style="padding:.75rem .5rem;min-height:280px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;max-height:320px">
+<div class="mc-msg mc-sys" id="mc0"><div class="mc-av" style="background:rgba(107,95,245,.08);font-size:.6rem">&#x1F512;</div><div><div class="mc-mh"><span class="mc-name" style="color:var(--v2)">Audrith</span><span class="mc-tag" style="background:rgba(107,95,245,.08);color:var(--v2)">System</span><span class="mc-time">14:21:52</span></div><div class="mc-body">Mission opened. <strong>candidate_batch_march_2026</strong>. AR-0091 active. Policy v2.3 loaded.</div></div></div>
+<div class="mc-msg" id="mc1"><div class="mc-av" style="background:rgba(107,95,245,.1)">&#x1F916;</div><div><div class="mc-mh"><span class="mc-name" style="color:var(--v2)">Hiring Agent 04</span><span class="mc-tag" style="background:rgba(107,95,245,.08);color:var(--v2)">Agent</span><span class="mc-time">14:21:59</span></div><div class="mc-body">Mission received. Candidate #3847 loaded. <strong>Policy v2.3 active.</strong></div><div class="mc-badges"><span class="mc-badge mc-badge-v">Identity verified</span><span class="mc-badge mc-badge-g">AR-0091 active</span></div></div></div>
+<div class="mc-msg" id="mc2"><div class="mc-av" style="background:rgba(45,168,232,.08)">&#x1F4CB;</div><div><div class="mc-mh"><span class="mc-name" style="color:#7DCFFF">Scout</span><span class="mc-tag" style="background:rgba(45,168,232,.08);color:#7DCFFF">Agent</span><span class="mc-time">14:22:01</span></div><div class="mc-body">Context validated. 4 docs parsed. <strong>No anomalies.</strong> Passing to Hiring Agent 04.</div></div></div>
+<div class="mc-msg" id="mc3"><div class="mc-av" style="background:rgba(107,95,245,.1)">&#x1F916;</div><div><div class="mc-mh"><span class="mc-name" style="color:var(--v2)">Hiring Agent 04</span><span class="mc-tag" style="background:rgba(107,95,245,.08);color:var(--v2)">Decision</span><span class="mc-time">14:22:04</span></div><div class="mc-body"><strong>Recommendation: Reject — role mismatch.</strong> Confidence 87%. Human approval required.</div><div class="mc-badges"><span class="mc-badge mc-badge-a">&#9888; Human approval required</span></div></div></div>
+
+<div class="mc-typing" id="mcTyping"><div class="mc-av">&#x1F464;</div><div><div style="font-size:.6rem;color:var(--sub);margin-bottom:4px">Sarah M. is reviewing</div><div class="mc-dots"><span></span><span></span><span></span></div></div></div>
+
+<div class="mc-appr" id="mcAppr"><div style="font-size:.7rem;font-weight:600;color:var(--a2);margin-bottom:.5rem">&#9888; Approval request — Sarah M.</div><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.625rem"><div style="width:26px;height:26px;border-radius:7px;background:rgba(240,146,10,.1);display:flex;align-items:center;justify-content:center;font-size:.75rem">&#x1F464;</div><div><div style="font-size:.72rem;font-weight:600;color:var(--white)">Sarah M.</div><div style="font-size:.58rem;color:var(--sub)">Hiring Manager</div></div></div><div style="font-size:.68rem;color:var(--txt);line-height:1.5;margin-bottom:.75rem">Candidate #3847 — rejection recommended. Role mismatch. Confidence 87%. Policy v2.3.</div><div style="display:flex;gap:.375rem"><button type="button" class="mc-appr-btn mc-appr-g" id="mcApprBtn" onclick="mcApprove()">&#10003; Approve rejection</button><button type="button" class="mc-appr-btn mc-appr-o">Escalate</button></div></div>
+
+<div class="mc-msg mc-decision" id="mc4" style="display:none"><div class="mc-av" style="background:rgba(30,201,148,.08)">&#x2705;</div><div><div class="mc-mh"><span class="mc-name" style="color:var(--g2)">Audrith</span><span class="mc-tag" style="background:rgba(30,201,148,.08);color:var(--g2)">Receipt</span><span class="mc-time">14:22:07</span></div><div class="mc-body"><strong>Witness Receipt WIT-24A9-1187 generated.</strong> Human approval: Sarah M. Record signed.</div></div></div>
+
+<div class="mc-receipt" id="mcReceipt" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;padding:.625rem 1rem;background:linear-gradient(135deg,var(--bg4),rgba(107,95,245,.08));border-bottom:1px solid rgba(107,95,245,.15)"><span style="font-size:.72rem;font-weight:600;color:var(--v2)">WIT&#x2011;24A9&#x2011;1187</span><span style="font-size:.55rem;font-weight:600;padding:.15rem .45rem;border-radius:100px;background:rgba(30,201,148,.1);border:1px solid rgba(30,201,148,.25);color:var(--g2)">&#9679; Verified</span></div><div class="mc-rr" id="mcr0"><span style="color:var(--sub)">agent</span><span style="color:var(--v2)">Hiring Agent 04</span></div><div class="mc-rr" id="mcr1"><span style="color:var(--sub)">authorization</span><span style="color:var(--g2)">AR-0091 — valid</span></div><div class="mc-rr" id="mcr2"><span style="color:var(--sub)">human_review</span><span style="color:var(--g2)">Approved — Sarah M.</span></div><div class="mc-rr" id="mcr3"><span style="color:var(--sub)">result</span><span style="color:var(--a2)">candidate_rejected</span></div><div class="mc-rr" id="mcr4" style="border:none"><span style="color:var(--sub)">record</span><span style="color:var(--g2)">Immutable — signed</span></div></div>
+</div>
+
+<div style="border-top:1px solid var(--line);padding:.625rem .875rem;display:flex;gap:.5rem;align-items:center;background:var(--bg3)"><span style="font-size:.7rem;color:var(--sub)">&#x1F512;</span><div style="flex:1;background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:7px;padding:.4rem .75rem;font-size:.65rem;color:var(--sub)">Secured operational thread — read only</div><button type="button" onclick="mcReplay()" style="background:rgba(107,95,245,.1);border:1px solid rgba(107,95,245,.2);color:var(--v2);border-radius:7px;padding:.4rem .75rem;font-size:.65rem;font-weight:600;cursor:pointer;font-family:'IBM Plex Mono',monospace">&#8635; Replay</button></div>
+</div>
+</div>
+</div>
+</section>
+
+<script>
+(function(){
+var _r = false;
+
+function _W(id) { return document.getElementById(id); }
+function _w(ms) { return new Promise(function(resolve) { setTimeout(resolve, ms); }); }
+
+function _reset() {
+['mc0','mc1','mc2','mc3','mc4'].forEach(function(id) {
+var e = _W(id);
+if (!e) return;
+e.classList.remove('mc-vis');
+e.style.display = (id === 'mc4') ? 'none' : '';
+});
+
+var typing = _W('mcTyping');
+if (typing) typing.classList.remove('mc-vis');
+
+var ap = _W('mcAppr');
+if (ap) {
+ap.classList.remove('mc-vis');
+ap.style.opacity = '';
+ap.style.transform = '';
+ap.style.display = '';
+}
+
+var btn = _W('mcApprBtn');
+if (btn) {
+btn.textContent = '✓ Approve rejection';
+btn.style.background = '';
+btn.style.pointerEvents = '';
+}
+
+var rec = _W('mcReceipt');
+if (rec) {
+rec.style.display = 'none';
+rec.classList.remove('mc-vis');
+}
+
+for (var i = 0; i < 5; i++) {
+var rr = _W('mcr' + i);
+if (rr) rr.classList.remove('mc-vis');
+}
+
+var f = _W('mcFeed');
+if (f) f.scrollTop = 0;
+}
+
+async function _run() {
+if (_r) return;
+_r = true;
+_reset();
+
+var f = _W('mcFeed');
+
+await _w(400);
+_W('mc0').classList.add('mc-vis');
+
+await _w(900);
+_W('mc1').classList.add('mc-vis');
+
+await _w(1100);
+_W('mc2').classList.add('mc-vis');
+
+await _w(1100);
+_W('mc3').classList.add('mc-vis');
+if (f) f.scrollTop = f.scrollHeight;
+
+await _w(1200);
+_W('mcTyping').classList.add('mc-vis');
+if (f) f.scrollTop = f.scrollHeight;
+
+await _w(2200);
+_W('mcTyping').classList.remove('mc-vis');
+
+await _w(200);
+_W('mcAppr').classList.add('mc-vis');
+if (f) f.scrollTop = f.scrollHeight;
+
+_r = false;
+}
+
+window.mcApprove = async function() {
+if (_r) return;
+_r = true;
+
+var btn = _W('mcApprBtn');
+btn.textContent = '✓ Approved';
+btn.style.background = 'rgba(30,201,148,.2)';
+btn.style.pointerEvents = 'none';
+
+await _w(600);
+
+var ap = _W('mcAppr');
+ap.style.opacity = '0';
+ap.style.transform = 'translateY(-4px)';
+
+await _w(400);
+ap.style.display = 'none';
+
+var m4 = _W('mc4');
+m4.style.display = '';
+await _w(50);
+m4.classList.add('mc-vis');
+
+var f = _W('mcFeed');
+if (f) f.scrollTop = f.scrollHeight;
+
+await _w(700);
+
+var rec = _W('mcReceipt');
+rec.style.display = '';
+await _w(50);
+rec.classList.add('mc-vis');
+if (f) f.scrollTop = f.scrollHeight;
+
+for (var i = 0; i < 5; i++) {
+_W('mcr' + i).classList.add('mc-vis');
+await _w(200);
+}
+
+if (f) f.scrollTop = f.scrollHeight;
+_r = false;
+};
+
+window.mcReplay = function() {
+if (_r) return;
+
+var ap = _W('mcAppr');
+ap.style.display = '';
+ap.style.opacity = '';
+ap.style.transform = '';
+
+_run();
+};
+
+if ('IntersectionObserver' in window) {
+var obs = new IntersectionObserver(function(entries) {
+entries.forEach(function(entry) {
+if (entry.isIntersecting && !_r) _run();
+});
+}, { threshold: 0.3 });
+
+var sec = document.getElementById('mission-channel');
+if (sec) obs.observe(sec);
+} else {
+_run();
+}
+})();
+</script>
+
+<section class="receipt-section">
+<div class="wrap">
+<div class="receipt-wrap">
+<div>
+<div class="section-label">Witness Receipt</div>
+<h2>Not a log.<br />Not a screenshot.<br /><em>A proof object.</em></h2>
+<p class="section-sub">A Witness Receipt shows the operation type, timestamp, agent identity, authorization state, human review status, result, and record integrity. When a decision is questioned, the company does not improvise. It produces the record.</p>
+<div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem">
+<div style="display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--txt)"><span style="color:var(--g2)">&#10003;</span> Signed by Audrith</div>
+<div style="display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--txt)"><span style="color:var(--g2)">&#10003;</span> Immutable record</div>
+<div style="display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--txt)"><span style="color:var(--g2)">&#10003;</span> Publicly verifiable</div>
+<div style="display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--txt)"><span style="color:var(--g2)">&#10003;</span> Human-readable</div>
+</div>
+</div>
+
+<div class="receipt-card">
+<div class="rc-head">
+<span class="rc-id">WIT&#x2011;24A9&#x2011;1187</span>
+<span class="rc-badge"><span class="rc-bd"></span>Witness Verified</span>
+</div>
+<div class="rc-rows">
+<div class="rc-row"><span class="rck">operation_type</span><span class="rcv v">candidate_screening</span></div>
+<div class="rc-row"><span class="rck">timestamp</span><span class="rcv">2026-03-12 14:22:08 UTC</span></div>
+<div class="rc-row"><span class="rck">agent</span><span class="rcv v">Hiring Agent 04 · AUD-0482</span></div>
+<div class="rc-row"><span class="rck">mission</span><span class="rcv">Candidate Screening</span></div>
+<div class="rc-row"><span class="rck">authorization</span><span class="rcv g">AR-0091 — valid at time of action</span></div>
+<div class="rc-row"><span class="rck">human_review</span><span class="rcv g">Approved — Sarah M.</span></div>
+<div class="rc-row"><span class="rck">operation_result</span><span class="rcv a">candidate_rejected</span></div>
+<div class="rc-row"><span class="rck">record</span><span class="rcv g">Immutable — signed by Audrith</span></div>
+</div>
+<div class="rc-foot">
+<span class="rc-fl">Cryptographic signature</span>
+<span class="rc-fv">0x4f2c...a719</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="usecases" id="usecases">
+<div class="wrap">
+<div class="section-label">First deployment</div>
+<h2>We start where the proof requirement<br /><em>is already real.</em></h2>
+<p class="section-sub">AI-assisted hiring is the right entry point because the risk is immediate. AI can screen, rank, recommend, reject, or route candidates — but when those decisions are challenged, companies need more than screenshots and internal notes.</p>
+
+<div class="ua-grid">
+<div class="ua-card bad">
+<div class="ua-label">Without Witness</div>
+<div class="ua-title">The company has activity, but not proof.</div>
+<ul class="ua-list">
+<li>A candidate is rejected, but there is no structured record of which model or agent made the recommendation.</li>
+<li>Human review may have happened informally, but no reviewer, timestamp, or approval state is preserved.</li>
+<li>Legal, Talent, or leadership teams end up reconstructing the decision from screenshots, notes, and system fragments.</li>
+<li>When challenged, the organization can explain what it thinks happened — not prove what did.</li>
+</ul>
+</div>
+
+<div class="ua-card good">
+<div class="ua-label">With Witness</div>
+<div class="ua-title">The decision becomes reconstructable and defensible.</div>
+<ul class="ua-list">
+<li>The acting agent is identified, the mission context is attached, and the authorization state is visible.</li>
+<li>Human approval checkpoints are captured explicitly when review is required.</li>
+<li>A Witness Receipt is issued at the end of the operation with the result and integrity record.</li>
+<li>Talent and Legal teams can replay the decision path and export a coherent audit trail.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="lookup-box">
+<div class="section-label" style="justify-content:center">Public lookup</div>
+<h2 style="text-align:center">Were you affected by<br /><em>an AI operation</em>?</h2>
+<p class="section-sub" style="text-align:center;margin:0 auto 0">Enter your Witness Receipt number to retrieve a structured, human-readable record of what happened.</p>
+<div class="lookup-input-wrap">
+<input class="lookup-input" placeholder="e.g. WIT-24A9-1187" type="text" />
+<button type="button" class="lookup-btn">Look up</button>
+</div>
+<div class="lookup-note">Free access — no account required — results in seconds</div>
+</div>
+</div>
+</section>
+
+<section class="pricing" id="pricing">
+<div class="wrap">
+<div class="section-label">Pricing</div>
+<h2>Infrastructure pricing.<br /><em>Not tool pricing.</em></h2>
+<p class="section-sub">Audrith is not sold like a lightweight SaaS widget. It is deployed where AI decisions carry legal, operational, and reputational consequences.</p>
+
+<div class="pricing-rule">No free tier · No self-serve · Serious deployments only</div>
+
+<div class="pricing-intro-note">Defending an important AI decision without a record is far more expensive than running a fixed pilot.</div>
+
+<div class="pricing-grid">
+<div class="price-card">
+<div class="pc-name">Fixed Pilot</div>
+<div class="pc-price">$7,500 <span>fixed scope</span></div>
+<div class="pc-desc">A 6–8 week fixed-scope deployment for one live workflow. Clear start. Clear end. Clear production decision.</div>
+<ul class="pc-features">
+<li>1 live workflow instrumented</li>
+<li>Mission Channel setup</li>
+<li>Approval logic captured</li>
+<li>Witness Receipt flow configured</li>
+<li>Audit export baseline</li>
+<li>Founding team involvement</li>
+<li>Defined scope and end date</li>
+<li>Production decision at the end</li>
+</ul>
+<a href="#contact" class="pc-btn outline">Apply for pilot</a>
+</div>
+
+<div class="price-card featured">
+<div class="price-badge">Default Production Plan</div>
+<div class="pc-name">Professional</div>
+<div class="pc-price">$3,500 <span>/ month</span></div>
+<div class="pc-desc">The default production plan for teams running AI-assisted hiring workflows with a real audit, legal, and governance requirement.</div>
+<ul class="pc-features">
+<li>Up to 5 workflows</li>
+<li>5,000 Witness Receipts / month</li>
+<li>Decision Replay</li>
+<li>Audit Export</li>
+<li>API access</li>
+<li>36-month retention</li>
+<li>NYC / EEOC / EU AI Act documentation</li>
+<li>Priority support</li>
+</ul>
+<a href="#contact" class="pc-btn solid">Book a demo</a>
+</div>
+
+<div class="price-card">
+<div class="pc-name">Enterprise</div>
+<div class="pc-price">Typically $5,000–12,000 <span>/ month</span></div>
+<div class="pc-desc">For larger deployments, multi-workflow environments, advanced integrations, extended retention, and deeper governance requirements.</div>
+<ul class="pc-features">
+<li>Unlimited workflows</li>
+<li>Unlimited Witness Receipts</li>
+<li>Advanced governance</li>
+<li>Extended retention options</li>
+<li>Custom integrations</li>
+<li>Protocol-level access</li>
+<li>Dedicated support</li>
+<li>Custom legal / procurement package</li>
+</ul>
+<a href="#contact" class="pc-btn outline">Talk to us</a>
+</div>
+</div>
+
+<div class="conversion-strip">
+<div class="conversion-main">Pilots convert to Professional by default.</div>
+<div class="conversion-sub">Clear path · No free tier · No self-serve</div>
+</div>
+</div>
+</section>
+
+<section class="cta-section" id="contact">
+<div class="wrap">
+<div class="cta-grid">
+<div class="cta-card">
+<div class="section-label">Get started</div>
+<h2>Trust is not enough.<br /><em>Important AI operations need proof.</em></h2>
+<p class="cta-note">Deploy Audrith on one real workflow. Get a working Witness trail, a proof object, and a clear production decision in weeks — not months.</p>
+
+<ul class="cta-points">
+<li>One real workflow, not a vague sandbox</li>
+<li>Fixed-scope pilot with founding team involvement</li>
+<li>Clear output: Witness trail, audit export, conversion decision</li>
+<li>Only 3 founding design partner slots</li>
+</ul>
+
+<div class="cta-mini">Pilot → Professional → Enterprise when scope expands</div>
+</div>
+
+<div class="pilot-form-wrap">
+<h3>Apply for a pilot</h3>
+<p>Complete the form below. The submission opens a prefilled email to the Audrith team. Replace the recipient address in the code when your domain email is ready.</p>
+
+<form class="pilot-form" id="pilotForm" novalidate>
+<div>
+<label for="pf-name">Full name</label>
+<input id="pf-name" name="name" class="field" type="text" required />
+</div>
+<div>
+<label for="pf-email">Work email</label>
+<input id="pf-email" name="email" class="field" type="email" required />
+</div>
+<div>
+<label for="pf-company">Company</label>
+<input id="pf-company" name="company" class="field" type="text" required />
+</div>
+<div>
+<label for="pf-role">Role</label>
+<input id="pf-role" name="role" class="field" type="text" required />
+</div>
+<div>
+<label for="pf-size">Team size</label>
+<select id="pf-size" name="teamSize" class="field" required>
+<option value="">Select</option>
+<option>1–25</option>
+<option>26–100</option>
+<option>101–500</option>
+<option>500+</option>
+</select>
+</div>
+<div>
+<label for="pf-workflow">Workflow</label>
+<select id="pf-workflow" name="workflow" class="field" required>
+<option value="">Select</option>
+<option>AI-assisted hiring</option>
+<option>Candidate screening</option>
+<option>Rejection workflow</option>
+<option>Approval / escalation workflow</option>
+<option>Other consequential AI workflow</option>
+</select>
+</div>
+<div class="full">
+<label for="pf-why">Why now?</label>
+<textarea id="pf-why" name="whyNow" class="field" required placeholder="Tell us what is live today, where the risk is, and what kind of pilot you want to run."></textarea>
+</div>
+<div class="full">
+<button type="submit">Submit pilot request</button>
+</div>
+</form>
+
+<div class="form-meta">
+<span>Default contact: founders@audrith.com</span>
+<a href="mailto:founders@audrith.com">Prefer email instead?</a>
+</div>
+
+<div id="formStatus" class="form-status"></div>
+</div>
+</div>
+</div>
+</section>
+
+<footer>
+<div class="footer-wrap">
+<div class="footer-brand">
+<a href="#" class="logo">Audrith</a>
+<p class="footer-tagline">Trust layer for agent-to-agent and agent-to-human operations.</p>
+</div>
+
+<div class="footer-col">
+<div class="footer-col-title">Product</div>
+<a href="#witness">Witness</a>
+<a href="#identity">Agent Identity</a>
+<a href="#mission-channel">Mission Channels</a>
+<a href="#pricing">Pricing</a>
+</div>
+
+<div class="footer-col">
+<div class="footer-col-title">Company</div>
+<a href="#contact">Contact</a>
+<a href="#pricing">Pilot</a>
+<a href="#">Security</a>
+<a href="#">White Paper</a>
+</div>
+
+<div class="footer-col">
+<div class="footer-col-title">Resources</div>
+<a href="#mission-channel">Live Demo</a>
+<a href="#">My Decision</a>
+<a href="#">API Docs</a>
+<a href="#contact">Apply for pilot</a>
+</div>
+</div>
+
+<div class="footer-bottom">
+<span>&copy; 2026 Audrith — All rights reserved</span>
+<div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+<a href="#" style="color:var(--sub);text-decoration:none">Privacy</a>
+<a href="#" style="color:var(--sub);text-decoration:none">Terms</a>
+</div>
+</div>
+</footer>
+
+<script>
+(function() {
+var form = document.getElementById('pilotForm');
+var status = document.getElementById('formStatus');
+var recipient = 'founders@audrith.com';
+
+if (!form || !status) return;
+
+function setStatus(type, message) {
+status.className = 'form-status ' + type;
+status.textContent = message;
+}
+
+function resetStatus() {
+status.className = 'form-status';
+status.textContent = '';
+}
+
+form.addEventListener('submit', function(event) {
+event.preventDefault();
+resetStatus();
+
+if (!form.checkValidity()) {
+setStatus('err', 'Please complete all required fields before submitting your pilot request.');
+form.reportValidity();
+return;
+}
+
+var data = new FormData(form);
+var subject = 'Audrith pilot request — ' + (data.get('company') || 'New company');
+var body = [
+'Audrith Pilot Request',
+'',
+'Full name: ' + (data.get('name') || ''),
+'Work email: ' + (data.get('email') || ''),
+'Company: ' + (data.get('company') || ''),
+'Role: ' + (data.get('role') || ''),
+'Team size: ' + (data.get('teamSize') || ''),
+'Workflow: ' + (data.get('workflow') || ''),
+'',
+'Why now?',
+(data.get('whyNow') || '')
+].join('\n');
+
+try {
+window.location.href = 'mailto:' + encodeURIComponent(recipient) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+setStatus('ok', 'Your email draft has been prepared. If nothing opened, email founders@audrith.com directly and paste the same information.');
+form.reset();
+} catch (error) {
+setStatus('err', 'We could not open your email app. Please email founders@audrith.com directly with your pilot request.');
+}
+});
+})();
+</script>
+</body>
+</html>
